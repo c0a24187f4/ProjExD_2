@@ -1,6 +1,7 @@
 import os  # 標準ライブラリ
 import random
 import sys
+import time
 import pygame as pg  # サードパーティー性ライブラリ
 # ここ以下に自作ライブラリ。ライブラリは基本五十音順らしい
 
@@ -27,6 +28,30 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     if rct.top < 0 or HEIGHT < rct.bottom:
         vrtcl = False  # 縦にはみ出たFalse
     return side, vrtcl
+
+
+def gameover(screen: pg.Surface) -> None:  # ゲームオーバー時の動き
+    """
+    引数: main関数内のSurface screen
+    戻り値: なし
+    こうかとんと爆弾が接触した際
+    """
+    black_bg = pg.Surface((1100, 650))
+    pg.draw.rect(black_bg, (0, 0, 0), (0, 0, 0, 0))  # 黒色の四角形を作成する
+    black_bg.set_alpha(200)  # 不透明度200に設定
+
+    game_over = pg.font.Font(None,80)  # フォントGame Overの設定
+    txt = game_over.render("Game Over", True, (255, 255, 255))  # txtに文字列情報を代入する
+    black_bg.blit(txt, [400, 325])  # Game Overの文字列をblack_bgにblit
+
+    kk_img = pg.image.load("fig/8.png")
+    black_bg.blit(kk_img, [340, 315])
+    black_bg.blit(kk_img, [720, 315])  # 2体のこうかとんをblack_bgにblit
+
+    screen.blit(black_bg, [0, 0])  # black_bgをscreenにblit
+
+    pg.display.update()
+    time.sleep(5)  # 5秒間スリープして再度main関数を実行する
 
 
 def main():
@@ -57,7 +82,7 @@ def main():
         screen.blit(bg_img, [0, 0]) 
 
         if kk_rct.colliderect(bb_rct):  # こうかとんと爆弾がぶつかったらmain関数からreturnする
-            return  # ゲームオーバー
+            gameover(screen)  # ゲームオーバー
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
