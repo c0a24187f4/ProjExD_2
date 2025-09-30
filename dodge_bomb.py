@@ -56,6 +56,9 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
 
+        if kk_rct.colliderect(bb_rct):  # こうかとんと爆弾がぶつかったらmain関数からreturnする
+            return  # ゲームオーバー
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for key, mv in DELTA.items():
@@ -79,9 +82,9 @@ def main():
 
         side, vrtcl = check_bound(bb_rct)
         if not side:  # 横にはみ出ていたら
-            vx *= -1.1
+            vx *= -1
         if not vrtcl:  # 縦にはみ出ていたら
-            vy *= -1.1
+            vy *= -1
         bb_rct.move_ip(vx, vy)
         screen.blit(bb_img, bb_rct)
 
