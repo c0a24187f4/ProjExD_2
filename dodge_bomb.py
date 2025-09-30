@@ -36,7 +36,7 @@ def gameover(screen: pg.Surface) -> None:  # ゲームオーバー時の動き
     戻り値: なし
     こうかとんと爆弾が接触した際に画面がブラックアウトしGameOverという文字列とこうかとんが出現する。5秒後に再度main関数が実行される
     """
-    black_bg = pg.Surface((1100, 650))
+    black_bg = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(black_bg, (0, 0, 0), (0, 0, 0, 0))  # 黒色の四角形を作成する
     black_bg.set_alpha(200)  # 不透明度200に設定
 
