@@ -34,7 +34,7 @@ def gameover(screen: pg.Surface) -> None:  # ゲームオーバー時の動き
     """
     引数: main関数内のSurface screen
     戻り値: なし
-    こうかとんと爆弾が接触した際
+    こうかとんと爆弾が接触した際に画面がブラックアウトしGameOverという文字列とこうかとんが出現する。5秒後に再度main関数が実行される
     """
     black_bg = pg.Surface((1100, 650))
     pg.draw.rect(black_bg, (0, 0, 0), (0, 0, 0, 0))  # 黒色の四角形を作成する
@@ -52,6 +52,25 @@ def gameover(screen: pg.Surface) -> None:  # ゲームオーバー時の動き
 
     pg.display.update()
     time.sleep(5)  # 5秒間スリープして再度main関数を実行する
+
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    引数: なし
+    戻り値: 爆弾のサイズ・加速度タプル(10段階分)
+    無限に拡大、加速するのはおかしいため、10段階分の爆弾サイズと加速度を格納した2つのlistを返す
+    """
+    bb_imgs = []
+
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+
+    bb_accs = [a for a in range(1, 11)]
+
+    return bb_imgs, bb_accs
 
 
 def main():
@@ -74,6 +93,8 @@ def main():
     vx, vy = +5, +5  # 爆弾の移動速度
     clock = pg.time.Clock()
     tmr = 0
+
+    bb_imgs, bb_accs = init_bb_imgs()
 
     while True:
         for event in pg.event.get():
@@ -105,12 +126,23 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
 
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        center = bb_rct.center
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct = bb_img.get_rect()
+        bb_rct.center = center
+
+
         side, vrtcl = check_bound(bb_rct)
         if not side:  # 横にはみ出ていたら
+            avx *= -1
             vx *= -1
         if not vrtcl:  # 縦にはみ出ていたら
+            avy *= -1
             vy *= -1
-        bb_rct.move_ip(vx, vy)
+        
+        bb_rct.move_ip(avx, avy)
         screen.blit(bb_img, bb_rct)
 
         pg.display.update()
