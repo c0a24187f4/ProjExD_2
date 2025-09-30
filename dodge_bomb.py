@@ -94,7 +94,7 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
 
-    bb_imgs, bb_accs = init_bb_imgs()
+    bb_imgs, bb_accs = init_bb_imgs()  # 関数を呼び出して変数bb_imgs・bb_accsにリストを格納
 
     while True:
         for event in pg.event.get():
@@ -104,6 +104,7 @@ def main():
 
         if kk_rct.colliderect(bb_rct):  # こうかとんと爆弾がぶつかったらmain関数からreturnする
             gameover(screen)  # ゲームオーバー
+            return
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -128,11 +129,11 @@ def main():
 
         avx = vx*bb_accs[min(tmr//500, 9)]
         avy = vy*bb_accs[min(tmr//500, 9)]
+
         center = bb_rct.center
         bb_img = bb_imgs[min(tmr//500, 9)]
-        bb_rct = bb_img.get_rect()
-        bb_rct.center = center
-
+        bb_rct = bb_img.get_rect()  # 当たり判定を画像サイズに合わせて再度生成する
+        bb_rct.center = center  # 爆弾のワープを防ぐ
 
         side, vrtcl = check_bound(bb_rct)
         if not side:  # 横にはみ出ていたら
@@ -140,9 +141,9 @@ def main():
             vx *= -1
         if not vrtcl:  # 縦にはみ出ていたら
             avy *= -1
-            vy *= -1
-        
-        bb_rct.move_ip(avx, avy)
+            vy *= -1  # 計算上はvx,vyが使用されているため、avx,avyだけ反転してしまうと外に行ってしまうので両方とも反転する
+
+        bb_rct.move_ip(avx, avy)  # meve_ipに渡すのはavxとavyに変更
         screen.blit(bb_img, bb_rct)
 
         pg.display.update()
