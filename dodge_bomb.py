@@ -1,6 +1,8 @@
-import os
+import os  # 標準ライブラリ
+import random
 import sys
-import pygame as pg
+import pygame as pg  # サードパーティー性ライブラリ
+# ここ以下に自作ライブラリ。ライブラリは基本五十音順らしい
 
 
 WIDTH, HEIGHT = 1100, 650
@@ -8,7 +10,7 @@ DELTA = {
     pg.K_UP: (0, -5), 
     pg.K_DOWN: (0, +5), 
     pg.K_LEFT: (-5, 0), 
-    pg.K_RIGHT: (+5, 0), #Pythonではリストや辞書の最後にも「,」を付けることが一般的
+    pg.K_RIGHT: (+5, 0),  # Pythonではリストや辞書の最後にも「,」を付けることが一般的
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,10 +18,21 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
+
+    bg_img = pg.image.load("fig/pg_bg.jpg")  
+
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
+    bb_img = pg.Surface((20, 20))  # サイズのみ設定された空のSurface
+    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 中心座標(10, 10)半径10の赤丸(爆弾)
+    bb_img.set_colorkey((0, 0, 0))  # 四隅の黒い部分を透明に
+    bb_rct = bb_img.get_rect()  # 爆弾Rect
+    bb_rct.centerx = random.randint(0, WIDTH)
+    bb_rct.centery = random.randint(0, HEIGHT)  # 爆弾Rectの初期位置がランダムになりつつ画面外にならないように
+
+    vx, vy = +5, +5  # 爆弾の移動速度
     clock = pg.time.Clock()
     tmr = 0
 
@@ -47,7 +60,12 @@ def main():
         """
         kk_rct.move_ip(sum_mv)
         screen.blit(kk_img, kk_rct)
+
+        bb_rct.move_ip(vx, vy)
+        screen.blit(bb_img, bb_rct)
+
         pg.display.update()
+
         tmr += 1
         clock.tick(50)
 
