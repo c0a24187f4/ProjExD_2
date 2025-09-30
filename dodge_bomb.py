@@ -60,15 +60,15 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     戻り値: 爆弾のサイズ・加速度タプル(10段階分)
     無限に拡大、加速するのはおかしいため、10段階分の爆弾サイズと加速度を格納した2つのlistを返す
     """
-    bb_imgs = []
+    bb_imgs = []  # Surface保存用の空リストの生成
 
-    for r in range(1, 11):
+    for r in range(1, 11):  # 10段階の爆弾サイズを用意するfor文
         bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_img.set_colorkey((0, 0, 0))
         bb_imgs.append(bb_img)
 
-    bb_accs = [a for a in range(1, 11)]
+    bb_accs = [a for a in range(1, 11)]  # 10段階の加速度を用意しbb_accsに格納する
 
     return bb_imgs, bb_accs
 
